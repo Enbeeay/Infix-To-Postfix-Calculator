@@ -1,0 +1,120 @@
+# -*-Makefile-*-
+#----------------------------------------------------------------------------
+#       Macros
+#----------------------------------------------------------------------------
+CC            = gcc
+CXX           = g++
+LD            = $(CXX) $(CCFLAGS) $(CPPFLAGS)
+AR            = ar
+PICFLAGS      = -fPIC
+CPPFLAGS      = $(PICFLAGS) $(GENFLAGS) -std=c++11 -D_REENTRANT
+OBJEXT        = .o
+OUTPUT_OPTION = -o "$@"
+COMPILE.c     = $(CC) $(CFLAGS) $(CPPFLAGS) -c
+COMPILE.cc    = $(CXX) $(CCFLAGS) $(CPPFLAGS) -c
+LDFLAGS       = -L"."
+CCC           = $(CXX)
+MAKEFILE      = Makefile.assignment4
+DEPENDENCIES  = .depend.$(MAKEFILE)
+BTARGETDIR    = ./
+BIN           = $(BTARGETDIR)assignment4$(EXESUFFIX)$(EXEEXT)
+CAT           = cat
+MV            = mv -f
+RM            = rm -rf
+CP            = cp -p
+NUL           = /dev/null
+MKDIR         = mkdir -p
+TESTDIRSTART  = test -d
+TESTDIREND    = ||
+TOUCH         = touch
+EXEEXT        = 
+LIBPREFIX     = lib
+LIBSUFFIX     = 
+GENFLAGS      = -g -O
+LDLIBS        = -ldl $(subst lib,-l,$(sort $(basename $(notdir $(wildcard /usr/lib/librt.so /lib/librt.so))))) -lpthread
+OBJS          = Calculator$(OBJEXT) driver$(OBJEXT) Visitor$(OBJEXT) Node$(OBJEXT) Addition_Node$(OBJEXT) Binary_Node$(OBJEXT) Division_Node$(OBJEXT) Modulus_Node$(OBJEXT) Multiplication_Node$(OBJEXT) Number_Node$(OBJEXT) Subtraction_Node$(OBJEXT) Tree$(OBJEXT) Tree_Builder$(OBJEXT) Tree_Visitor$(OBJEXT) Math_Expr$(OBJEXT) Expr_Builder$(OBJEXT)
+SOEXT         = .so
+SRC           = Calculator.cpp driver.cpp Visitor.cpp Node.cpp Addition_Node.cpp Binary_Node.cpp Division_Node.cpp Modulus_Node.cpp Multiplication_Node.cpp Number_Node.cpp Subtraction_Node.cpp Tree.cpp Tree_Builder.cpp Tree_Visitor.cpp Math_Expr.cpp Expr_Builder.cpp
+LINK.cc       = $(LD) $(LDFLAGS)
+EXPORTFLAGS   = 
+DEPLIBS       = $(foreach lib, , $(foreach libpath, ., $(wildcard $(libpath)/lib$(lib).a)))
+
+#----------------------------------------------------------------------------
+#       Local targets
+#----------------------------------------------------------------------------
+
+all: $(BIN)
+
+$(BIN): $(OBJS) $(DEPLIBS)
+	@$(TESTDIRSTART) "$(BTARGETDIR)" $(TESTDIREND) $(MKDIR) "$(BTARGETDIR)"
+	$(LINK.cc) $(OBJS) $(LDLIBS) $(OUTPUT_OPTION)
+
+generated: $(GENERATED_DIRTY)
+	@-:
+
+Calculator$(OBJEXT): Calculator.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Calculator.cpp
+
+driver$(OBJEXT): driver.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) driver.cpp
+
+Visitor$(OBJEXT): Visitor.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Visitor.cpp
+
+Node$(OBJEXT): Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Node.cpp
+
+Addition_Node$(OBJEXT): Addition_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Addition_Node.cpp
+
+Binary_Node$(OBJEXT): Binary_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Binary_Node.cpp
+
+Division_Node$(OBJEXT): Division_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Division_Node.cpp
+
+Modulus_Node$(OBJEXT): Modulus_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Modulus_Node.cpp
+
+Multiplication_Node$(OBJEXT): Multiplication_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Multiplication_Node.cpp
+
+Number_Node$(OBJEXT): Number_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Number_Node.cpp
+
+Subtraction_Node$(OBJEXT): Subtraction_Node.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Subtraction_Node.cpp
+
+Tree$(OBJEXT): Tree.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Tree.cpp
+
+Tree_Builder$(OBJEXT): Tree_Builder.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Tree_Builder.cpp
+
+Tree_Visitor$(OBJEXT): Tree_Visitor.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Tree_Visitor.cpp
+
+Math_Expr$(OBJEXT): Math_Expr.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Math_Expr.cpp
+
+Expr_Builder$(OBJEXT): Expr_Builder.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Expr_Builder.cpp
+
+clean:
+	-$(RM) $(OBJS)
+
+realclean: clean
+	-$(RM) $(BIN)
+
+check-syntax:
+	$(COMPILE.cc) $(EXPORTFLAGS) -Wall -Wextra -pedantic -fsyntax-only $(CHK_SOURCES)
+
+#----------------------------------------------------------------------------
+#       Dependencies
+#----------------------------------------------------------------------------
+
+
+depend:
+	-$(MPC_ROOT)/depgen.pl  $(CFLAGS) $(CCFLAGS) $(CPPFLAGS) -f $(DEPENDENCIES) $(SRC) 2> $(NUL)
+
+-include $(DEPENDENCIES)
